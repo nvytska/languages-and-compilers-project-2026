@@ -1,0 +1,420 @@
+AI USAGE DISCLOSURE
+
+Project: Languages and Compilers Design — Project Stage 1
+Student: Natalia Vytska
+
+AI tool used:
+ChatGPT (OpenAI)
+
+Chat transcript:
+https://chatgpt.com/share/6ac50c4e-d198-83eb-b24c-aea55214b062
+I used ChatGPT during the development of this project as a programming assistant. AI was used for planning, discussing the language design, reviewing the assignment requirements, suggesting implementation structure, debugging, and preparing test cases and documentation.
+
+1. PROJECT PLANNING
+
+Prompt / request:
+I asked ChatGPT to analyze the Stage 1 assignment and create a step-by-step implementation plan with approximate time estimates.
+
+AI contribution:
+ChatGPT divided the work into:
+- repository setup
+- language design
+- EBNF grammar
+- AST hierarchy
+- lexer
+- parser
+- AST output
+- error handling
+- valid and invalid tests
+- test runner
+- README
+- AI usage disclosure
+- final Git and pull request preparation
+
+What I changed / did myself:
+I followed the plan incrementally and manually created and modified the project files in my repository.
+
+2. LANGUAGE DESIGN
+
+Prompt / request:
+I discussed ideas for creating a custom language. I proposed using "meow" as the assignment operator and different cat emojis as data types.
+
+The final syntax decisions were made during the conversation.
+
+Final language design:
+
+🐱 = i32
+🐈 = i64
+😺 = bool
+
+meow = assignment (=)
+meowmeow = equality comparison (==)
+woem = inequality comparison (!=)
+
+Normal keywords were kept for:
+var
+let
+if
+else
+true
+false
+
+The language does not use semicolons and supports negative integer literals.
+
+AI contribution:
+ChatGPT checked whether this design satisfied the project requirements and suggested keeping the remaining keywords simple to reduce lexer/parser complexity.
+
+What I changed / did myself:
+The cat theme, "meow", "meowmeow", and "woem" syntax were chosen by me during the discussion. I decided which suggestions to keep.
+
+3. EBNF GRAMMAR
+
+Prompt / request:
+I asked ChatGPT to help create grammar.ebnf based on the language design.
+
+AI contribution:
+ChatGPT suggested an EBNF grammar covering:
+- programs
+- statements
+- mutable and immutable declarations
+- assignments
+- if / else
+- expressions
+- comparisons
+- integer literals
+- boolean literals
+- identifiers
+- the three custom type symbols
+
+It also pointed out that if and else blocks must contain at least one statement.
+
+What I took as-is:
+I used the general grammar structure suggested by ChatGPT.
+
+What I changed / did myself:
+I reviewed the grammar and added it manually to grammar.ebnf according to the syntax decisions made earlier.
+
+4. AST DESIGN
+
+Prompt / request:
+I asked ChatGPT to continue step by step after finishing the grammar.
+
+AI contribution:
+ChatGPT suggested the following AST hierarchy:
+
+ASTNode
+ProgramNode
+
+StmtNode
+- VarDeclNode
+- AssignmentNode
+- IfNode
+
+ExprNode
+- IntegerLiteralNode
+- BooleanLiteralNode
+- IdentifierNode
+- ComparisonNode
+
+It also suggested storing line and column information in every AST node and storing fields such as mutability, type, variable name, operator, operands and statement bodies.
+
+What I took as-is:
+I followed this general hierarchy.
+
+What I changed / did myself:
+I implemented the classes manually in compiler.py and adapted constructor parameter ordering to my implementation.
+
+5. LEXER IMPLEMENTATION
+
+Prompt / request:
+I asked ChatGPT to guide me through implementing the lexer.
+
+AI contribution:
+ChatGPT suggested:
+- reading the source file as bytes
+- a Lexer class with position, line and column
+- current_byte() and advance()
+- whitespace handling
+- manual ASCII letter/digit checks
+- identifier and keyword scanning
+- integer scanning
+- UTF-8 byte matching for cat emojis
+- token kinds for keywords, operators, identifiers, integers, braces and EOF
+- storing kind, text, line and column in every token
+
+The lexer was implemented without regular expressions, split(), or a lexer generator.
+
+What I took as-is:
+I used much of the suggested structure and helper functions.
+
+What I changed / did myself:
+I manually integrated the code into compiler.py, ran it, inspected the token output and fixed implementation issues as they appeared.
+
+6. LEXER DEBUGGING
+
+Problem encountered:
+The lexer produced:
+
+compilation error: line 1:1: unexpected character
+
+even though the first input byte was "v".
+
+Prompt / debugging process:
+I provided the lexer output and debug output to ChatGPT.
+
+AI contribution:
+ChatGPT suggested printing the current byte and checking is_letter(). The debug output showed:
+
+BYTE: 118 v
+IS LETTER: True
+
+ChatGPT identified that lex_word() was probably being called without returning its result.
+
+The problematic structure was effectively:
+
+if self.is_letter(byte):
+    self.lex_word()
+
+It needed to be:
+
+if self.is_letter(byte):
+    return self.lex_word()
+
+What I changed / did myself:
+I applied the fix and reran the lexer. After the fix, tokenization worked correctly.
+
+7. PARSER IMPLEMENTATION
+
+Prompt / request:
+After the lexer worked, I asked ChatGPT to continue with the recursive-descent parser.
+
+AI contribution:
+ChatGPT suggested a Parser class using:
+- peek()
+- eat()
+
+and parser methods corresponding to grammar rules:
+
+parse_program()
+parse_statement()
+parse_variable_declaration()
+parse_assignment()
+parse_if_statement()
+parse_expression()
+parse_primary()
+
+It provided example implementations for these methods and showed how they should construct AST nodes.
+
+What I took as-is:
+I used the recursive-descent organization and much of the suggested control flow.
+
+What I changed / did myself:
+I manually added the code to compiler.py, adapted AST constructor calls where necessary, and tested the parser after each stage.
+
+8. IF / ELSE PARSING
+
+AI contribution:
+ChatGPT suggested enforcing non-empty if and else blocks in parse_if_statement().
+
+Examples of errors implemented:
+
+if block must contain at least one statement
+
+else block must contain at least one statement
+
+It also suggested detecting EOF inside an unfinished block and reporting an expected closing brace.
+
+What I changed / did myself:
+I implemented the parser behavior and verified it using invalid inputs.
+
+9. AST OUTPUT
+
+Prompt / request:
+I asked ChatGPT to continue after the parser successfully returned a ProgramNode.
+
+AI contribution:
+ChatGPT suggested dump() methods for AST nodes and a stable indented output format.
+
+The output includes information such as:
+- mutable
+- type
+- name
+- value
+- comparison operator
+- left/right expression
+- if condition
+- then body
+- else body
+
+What I took as-is:
+I used the suggested general formatting style.
+
+What I changed / did myself:
+I implemented the dump methods in my classes and verified the actual output from the compiler.
+
+10. COMMAND-LINE INTERFACE
+
+AI contribution:
+ChatGPT suggested wiring the compiler to run using:
+
+python3 compiler.py --ast input.txt
+
+It suggested:
+- validating command-line arguments
+- reading the input file in binary mode
+- running the lexer
+- running the parser
+- printing the AST
+- writing errors to stderr
+- exiting with a non-zero code on failure
+
+What I took as-is:
+I used this command-line structure.
+
+What I changed / did myself:
+I integrated it with my existing compiler implementation and tested it from the terminal.
+
+11. ERROR HANDLING
+
+AI contribution:
+ChatGPT suggested a shared compilation_error() helper producing errors in the format:
+
+compilation error: line L:C: message
+
+I tested error behavior manually.
+
+Example:
+
+compilation error: line 2:1: expected expression, got EOF
+
+What I changed / did myself:
+I ran the compiler against malformed source files and verified stderr and exit codes.
+
+12. TEST CASES
+
+Prompt / request:
+I asked ChatGPT to help build the required test suite.
+
+AI contribution:
+ChatGPT proposed 15 valid scenarios covering:
+- i32 declaration
+- i64 declaration
+- true boolean
+- false boolean
+- negative integer
+- assignment
+- equality
+- inequality
+- if without else
+- if with else
+- nested if
+- identifier expression
+- boolean comparison
+- multiple statements
+- a full program combining features
+
+ChatGPT also proposed 15 invalid scenarios covering:
+- missing type
+- missing identifier
+- missing assignment operator
+- missing value
+- invalid character
+- standalone minus
+- missing opening brace
+- missing closing brace
+- empty if
+- empty else
+- else without if
+- assignment without value
+- comparison without right operand
+- invalid statement start
+- malformed declaration
+
+What I took as-is:
+I used these scenarios as the basis of the test suite.
+
+What I changed / did myself:
+I created the actual .txt files, generated expected AST/error files using my compiler, and ran all tests locally.
+
+13. TEST RUNNER
+
+Prompt / request:
+I asked ChatGPT to help create run_tests.sh.
+
+AI contribution:
+ChatGPT suggested a Bash script that:
+- runs all tests/valid/*.txt
+- compares compiler output with the corresponding .expected file
+- verifies valid programs return exit code 0
+- runs all tests/invalid/*.txt
+- compares stderr with expected errors
+- verifies invalid programs return a non-zero exit code
+- prints PASS/FAIL for each test
+- prints a final summary
+- exits non-zero if any test fails
+
+What I took as-is:
+I used this general test-runner implementation.
+
+Result of my final test run:
+
+=== SUMMARY ===
+Passed: 30
+Failed: 0
+
+14. README
+
+Prompt / request:
+I asked ChatGPT to help prepare README.md after the implementation and tests were complete.
+
+AI contribution:
+ChatGPT drafted documentation describing:
+- MeowLang
+- supported language features
+- cat data types
+- assignment and comparison operators
+- variable declarations
+- if / else
+- example programs
+- lexer implementation
+- parser implementation
+- AST structure
+- compiler usage
+- error format
+- test structure
+- how to run tests
+
+What I took as-is:
+I used the generated README as the basis of README.md.
+
+What I changed / did myself:
+I reviewed the documentation against my implementation before adding it to the repository.
+
+15. SUMMARY OF AI CONTRIBUTION
+
+AI was used as an interactive assistant throughout Stage 1.
+
+AI helped with:
+- interpreting the assignment
+- planning implementation
+- reviewing language design
+- drafting EBNF
+- suggesting AST structure
+- suggesting lexer and parser implementation
+- debugging
+- generating test ideas
+- preparing the test runner
+- drafting README documentation
+
+I manually:
+- created and configured the repository
+- made the language design decisions during the discussion
+- created and edited the project files
+- integrated the suggested code
+- ran all commands locally
+- debugged the implementation using actual outputs
+- generated expected test outputs using my compiler
+- verified all 30 tests
+- reviewed the final implementation
+
+AI-generated suggestions were not submitted blindly. They were integrated incrementally, executed locally, tested, and adjusted where necessary.

@@ -1,0 +1,7 @@
+Program
+  VarDecl
+    mutable: false
+    type: bool
+    name: ready
+    value:
+      BooleanLiteral value: false

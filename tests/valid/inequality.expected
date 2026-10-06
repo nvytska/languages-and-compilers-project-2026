@@ -1,0 +1,18 @@
+Program
+  VarDecl
+    mutable: true
+    type: i32
+    name: x
+    value:
+      IntegerLiteral value: 5
+  VarDecl
+    mutable: true
+    type: bool
+    name: result
+    value:
+      Comparison
+        operator: woem
+        left:
+          Identifier name: x
+        right:
+          IntegerLiteral value: 10

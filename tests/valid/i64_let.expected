@@ -1,0 +1,7 @@
+Program
+  VarDecl
+    mutable: false
+    type: i64
+    name: population
+    value:
+      IntegerLiteral value: 8000000000

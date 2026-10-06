@@ -1,0 +1,7 @@
+var 🐱 x meow 5
+
+if x meowmeow 5 {
+    x meow 6
+} else {
+    x meow 7
+}

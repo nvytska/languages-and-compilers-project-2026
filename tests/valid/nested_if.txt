@@ -1,0 +1,8 @@
+var 🐱 x meow 5
+var 😺 ready meow true
+
+if x meowmeow 5 {
+    if ready meowmeow true {
+        x meow 10
+    }
+}

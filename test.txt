@@ -1,0 +1,8 @@
+var 🐱 age meow 19
+var 😺 sleepy meow false
+
+if age meowmeow 19 {
+    sleepy meow true
+} else {
+    sleepy meow false
+}

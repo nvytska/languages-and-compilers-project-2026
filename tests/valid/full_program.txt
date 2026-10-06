@@ -1,0 +1,13 @@
+let 🐈 limit meow 9000000000
+var 🐱 count meow -5
+var 😺 active meow true
+
+if count woem 0 {
+    count meow 10
+
+    if active meowmeow true {
+        active meow false
+    }
+} else {
+    count meow 1
+}

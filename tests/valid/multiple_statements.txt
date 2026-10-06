@@ -1,0 +1,5 @@
+var 🐱 x meow 1
+var 🐱 y meow 2
+let 🐈 big meow 9000000000
+var 😺 ready meow false
+x meow y

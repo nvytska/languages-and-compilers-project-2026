@@ -1,0 +1,29 @@
+Program
+  VarDecl
+    mutable: true
+    type: i32
+    name: x
+    value:
+      IntegerLiteral value: 1
+  VarDecl
+    mutable: true
+    type: i32
+    name: y
+    value:
+      IntegerLiteral value: 2
+  VarDecl
+    mutable: false
+    type: i64
+    name: big
+    value:
+      IntegerLiteral value: 9000000000
+  VarDecl
+    mutable: true
+    type: bool
+    name: ready
+    value:
+      BooleanLiteral value: false
+  Assignment
+    name: x
+    value:
+      Identifier name: y
