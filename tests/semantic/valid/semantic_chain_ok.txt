@@ -1,0 +1,13 @@
+mewi Point {
+    var 🐱 x
+}
+
+mewi Circle {
+    var Point center
+}
+
+var Circle c meow Circle{
+    Point{10}
+}
+
+c.center.x meow 20

@@ -1,0 +1,1 @@
+compilation error: line 2:34: argument 1 of member function 'setX' must have type 'i32', got 'bool'

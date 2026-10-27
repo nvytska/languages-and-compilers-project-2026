@@ -1,0 +1,10 @@
+var 🐱 x meow 10
+var 😺 condition meow true
+
+if condition {
+    x meow x + 5
+} else {
+    x meow x - 5
+}
+
+🐾(x)

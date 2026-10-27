@@ -1,0 +1,16 @@
+mewi Point {
+    var 🐱 x
+    var 🐱 y
+}
+
+mewi Circle {
+    var Point center
+    var 🐱 radius
+}
+
+var Circle c meow Circle{
+    Point{10, 20},
+    5
+}
+
+🐾(c)

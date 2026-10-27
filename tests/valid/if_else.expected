@@ -15,11 +15,13 @@ Program
           IntegerLiteral value: 5
     then:
       Assignment
-        name: x
+        target:
+          Identifier name: x
         value:
           IntegerLiteral value: 6
     else:
       Assignment
-        name: x
+        target:
+          Identifier name: x
         value:
           IntegerLiteral value: 7

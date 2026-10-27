@@ -1,0 +1,7 @@
+var 🐱 a meow 42
+var 🐈 b meow 3000000000
+var 😺 c meow true
+🐾(a)
+🐾(b)
+🐾(c)
+🐾("hello cats")

@@ -1,0 +1,14 @@
+mewi Point {
+    var 🐱 x
+
+    murr setX(🐱 value) kss 🐱 {
+        x meow value
+        mi x
+    }
+}
+
+var Point p meow Point{10}
+
+p.setX(25)
+
+🐾(p)

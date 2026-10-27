@@ -6,6 +6,7 @@ Program
     value:
       IntegerLiteral value: 5
   Assignment
-    name: x
+    target:
+      Identifier name: x
     value:
       IntegerLiteral value: 10

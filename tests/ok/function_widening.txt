@@ -1,0 +1,6 @@
+murr big(🐈 value) kss 🐈 { mi value }
+var 🐱 small meow -10
+var 🐈 wide meow big(small)
+🐾(wide)
+🐾(big(3000000000) + 1)
+🐾(small woem wide)

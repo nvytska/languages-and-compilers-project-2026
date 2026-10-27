@@ -1,0 +1,5 @@
+murr f() kss 🐱 {
+    var 🐱 x meow 1
+    var 🐱 x meow 2
+    mi x
+}

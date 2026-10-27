@@ -1,0 +1,8 @@
+mewi Point {
+var 🐱 x
+var 🐱 y
+murr d2() kss 🐱 { mi x * x + y * y }
+}
+var Point p meow Point{📚(), 📚()}
+🐾(p)
+🐾(p.d2())

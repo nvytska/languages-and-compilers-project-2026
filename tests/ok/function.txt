@@ -1,0 +1,5 @@
+murr add(🐱 a, 🐱 b) kss 🐱 {
+    mi a + b
+}
+
+🐾(add(10, 20))

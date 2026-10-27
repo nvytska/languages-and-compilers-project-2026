@@ -1,0 +1,6 @@
+var 🐱 a meow 10
+var 🐈 b meow 3000000000
+
+var 🐈 c meow a + b
+
+🐾(c)

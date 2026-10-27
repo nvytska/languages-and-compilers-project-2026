@@ -1,0 +1,9 @@
+murr down(🐱 n) kss 🐱 {
+    if n meowmeow 0 {
+        mi 0
+    } else {
+        mi down(n - 1)
+    }
+}
+
+🐾(down(5))

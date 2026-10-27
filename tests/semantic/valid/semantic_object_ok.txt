@@ -1,0 +1,10 @@
+mewi Point {
+    var 🐱 x
+    var 🐱 y
+}
+
+var Point p meow Point{10, 20}
+
+var 🐱 value meow p.x
+
+p.y meow 50
