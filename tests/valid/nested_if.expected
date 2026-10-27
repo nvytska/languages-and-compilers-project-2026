@@ -30,6 +30,7 @@ Program
               BooleanLiteral value: true
         then:
           Assignment
-            name: x
+            target:
+              Identifier name: x
             value:
               IntegerLiteral value: 10

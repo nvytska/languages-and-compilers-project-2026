@@ -1,0 +1,662 @@
+AI USAGE DISCLOSURE — PROJECT STAGE 2
+
+Tool used:
+- ChatGPT by OpenAI
+
+I used ChatGPT during Stage 2 as a programming assistant for planning the implementation, reviewing semantic rules, designing LLVM code generation, creating test cases, and updating documentation.
+
+I did not use AI to replace the whole project with a generated solution. The Stage 1 compiler and the language syntax were the starting point. I integrated the suggestions into my existing compiler, adapted them to my AST, parser, naming and language syntax, ran the complete test suite, and fixed inconsistencies when necessary.
+
+The final test suite result was:
+
+Passed: 108
+Failed: 0
+
+
+==================================================
+1. PLANNING STAGE 2
+==================================================
+
+Prompts sent to ChatGPT included:
+
+"що тут треба робити та скільки часу витратити"
+
+"окей давай далі"
+
+I used ChatGPT to understand the Stage 2 requirements and split the work into the following main parts:
+
+- grammar and AST extensions;
+- parser changes;
+- semantic analysis;
+- numeric types and overflow;
+- LLVM functions;
+- LLVM structures;
+- LLVM member functions;
+- input/output;
+- tests;
+- README and AI usage documentation.
+
+What I used:
+- the general implementation order;
+- the idea of finishing semantic analysis before LLVM generation;
+- a checklist of the features required by Stage 2.
+
+What I changed:
+- I used my own MeowLang syntax instead of the syntax from the course examples;
+- I kept the existing compiler structure from Stage 1 and extended it instead of rebuilding the compiler from scratch.
+
+
+==================================================
+2. LANGUAGE DESIGN AND GRAMMAR
+==================================================
+
+Prompts included:
+
+"functions
+murr add(🐱 a, 🐱 b) kss 🐱 {
+    mi a + b
+}
+
+struct
+mewi Point { var ....}
+
+member 
+
+mewi Point {..... murr getX() kss ...."
+
+"read() -> 📚()
+print() -> 🐾()
+`Point{10, 20}` for object creation"
+
+"ок ebnf я написала"
+
+I designed the actual MeowLang syntax, including:
+
+- `murr` for function declarations;
+- `kss` before the result type;
+- `mi` for returning a value;
+- `mewi` for structures;
+- `📚()` for integer input;
+- `🐾(...)` for output;
+- `Point{10, 20}` for object construction;
+- `.` for fields and member functions.
+
+I wrote the EBNF grammar myself and used ChatGPT to review whether it covered the Stage 2 requirements.
+
+What I used:
+- suggestions about which grammar constructs needed to exist;
+- suggestions about distinguishing function calls, member calls, field accesses and object creation.
+
+What I changed:
+- the exact syntax and names were my own;
+- I kept the grammar consistent with my hand-written recursive-descent parser.
+
+
+==================================================
+3. PARSER AND AST
+==================================================
+
+Prompts included:
+
+"ok lets go"
+
+"ok lets go to parser"
+
+"ок супер це я зробила"
+
+"готово"
+
+I used ChatGPT to reason about the AST nodes required for Stage 2.
+
+Suggested node categories included:
+
+- function declarations;
+- parameters;
+- return statements;
+- structure declarations;
+- field declarations;
+- function calls;
+- field accesses;
+- member calls;
+- object creation;
+- read;
+- print;
+- string literals;
+- expression statements.
+
+What I used:
+- the general AST structure;
+- the idea that calls must be expressions so they can be nested;
+- recursive representation of chains such as `c.center.x`.
+
+What I changed:
+- I adapted all suggested node names and fields to the classes already present in my compiler;
+- I kept my parser as a recursive-descent parser with one parser function per grammar rule.
+
+
+==================================================
+4. SEMANTIC ANALYSIS
+==================================================
+
+Prompts included:
+
+"ок давай робити далі"
+
+"ок поїхали далі в обєкти"
+
+"готово але поясни як вони будуються"
+
+"ок давай"
+
+I used ChatGPT to design the symbol information needed by the semantic analyzer.
+
+The proposed concepts included symbols for:
+
+- variables;
+- functions;
+- fields;
+- structures;
+- member functions.
+
+The semantic analyzer was designed to track:
+
+- variable type and mutability;
+- function parameter and result types;
+- field type, mutability and index;
+- member function signatures;
+- current function;
+- current structure;
+- nested scopes.
+
+What I used:
+- a separate semantic pass before code generation;
+- pre-declaration of function signatures to support recursion and forward calls;
+- structure metadata containing fields in declaration order;
+- checking argument count and types before LLVM generation;
+- checking field existence and member function existence;
+- checking return value types;
+- checking mutable field chains;
+- checking mutating member calls on immutable objects.
+
+What I changed:
+- I integrated this logic into my own SemanticChecker implementation;
+- I adapted lookup functions and error messages to my compiler;
+- I verified the behavior through invalid tests.
+
+
+==================================================
+5. NAME LOOKUP INSIDE MEMBER FUNCTIONS
+==================================================
+
+ChatGPT helped me define a precise name lookup rule for member functions.
+
+The rule used in the project is:
+
+1. local variables and parameters;
+2. fields of the current structure;
+3. global variables.
+
+This was important because a parameter, structure field and global variable can have the same name.
+
+I also used the rule that other member functions of the same structure can be called by name from inside a member function.
+
+I understood that the semantic analyzer must resolve what every identifier refers to before LLVM generation.
+
+
+==================================================
+6. INTEGER TYPES, WIDENING AND OVERFLOW
+==================================================
+
+Prompts included:
+
+"чекай а що ми будемо робити з оверфлоу? та з визначенням типу числа"
+
+"давай виправимо це все перед llvm"
+
+This part was significantly discussed with ChatGPT.
+
+The rules implemented were:
+
+- integer literals receive the narrowest type they fit;
+- values fitting in signed 32 bits use `i32`;
+- larger values fitting in signed 64 bits use `i64`;
+- literals outside signed `i64` are compilation errors;
+- implicit `i32 -> i64` widening is allowed;
+- implicit `i64 -> i32` narrowing is not allowed;
+- arithmetic returns the wider integer type;
+- integer comparisons may compare `i32` and `i64`;
+- booleans cannot participate in integer arithmetic.
+
+What I used:
+- helper logic for determining the type of an integer literal;
+- an `is_assignable` rule;
+- expression type information stored by the semantic pass;
+- widening before LLVM operations when needed.
+
+I also handled the edge values:
+
+- `-2147483648`;
+- `-9223372036854775808`.
+
+I understood the difference between two kinds of overflow:
+
+1. A literal outside the supported range can be detected during semantic analysis.
+2. Arithmetic such as `2000000000 + 2000000000` depends on runtime values and therefore needs a runtime overflow check in the generated LLVM code.
+
+
+==================================================
+7. LLVM CODE GENERATION — BASIC TYPES AND OVERFLOW
+==================================================
+
+Prompt:
+
+"окей давай далі"
+
+ChatGPT suggested passing semantic type information to the LLVM code generator.
+
+I used the idea of a helper equivalent to:
+
+- map MeowLang types to LLVM types;
+- widen an `i32` LLVM value to `i64` with `sext`.
+
+For checked arithmetic, ChatGPT suggested using LLVM signed overflow intrinsics corresponding to:
+
+- signed add with overflow;
+- signed subtract with overflow;
+- signed multiply with overflow.
+
+The generated code branches when the overflow flag is true and terminates the program with an overflow message.
+
+What I used:
+- the general checked arithmetic structure;
+- extracting both the arithmetic result and overflow flag;
+- branching to an overflow block.
+
+What I changed:
+- I adapted function names, blocks and runtime helpers to my compiler;
+- I tested both normal arithmetic and overflow behavior.
+
+
+==================================================
+8. LLVM FUNCTIONS
+==================================================
+
+Prompt:
+
+"давай далі до llvm functions"
+
+ChatGPT suggested generating functions in two phases:
+
+1. declare all LLVM functions;
+2. generate all function bodies.
+
+I used this because MeowLang supports:
+
+- recursion;
+- calls to functions declared later.
+
+User-defined LLVM function names use a prefix so that MeowLang functions do not collide with names such as `main`, `printf` or `scanf`.
+
+Function parameters are stored in local LLVM stack slots so that they can be handled using the same variable logic as local variables.
+
+For `mi`, the generated LLVM code returns the expression value, applying `i32 -> i64` widening where required.
+
+Function calls evaluate their arguments and widen them according to the parameter types determined by semantic analysis.
+
+What I understood:
+- LLVM needs the callee declaration before a call can reference it;
+- declaring every function first solves both recursion and forward-call resolution;
+- LLVM builder calls must not be used as the semantic type checker.
+
+
+==================================================
+9. LLVM STRUCTURES
+==================================================
+
+Prompt:
+
+"ок давай до llvm structs"
+
+ChatGPT suggested representing every MeowLang structure as an LLVM identified structure type.
+
+The implementation uses two passes:
+
+1. create all named LLVM structure types;
+2. fill their bodies with their field types.
+
+This allows one structure type to refer to another structure declared later.
+
+Fields are accessed using LLVM `getelementptr` (GEP).
+
+The field index comes from the semantic structure metadata.
+
+What I used:
+- identified LLVM structure types;
+- field indices from semantic analysis;
+- a helper that produces the address of a variable or field;
+- recursive field-address generation for chains such as `c.center.x`;
+- temporary storage for constructed objects.
+
+What I understood:
+- LLVM does not know source-level field names;
+- it accesses structure fields by numeric index;
+- therefore the semantic symbol table must preserve each field's declaration order and index.
+
+
+==================================================
+10. LLVM MEMBER FUNCTIONS
+==================================================
+
+Prompt:
+
+"ок давай далі"
+
+ChatGPT explained that a member function can be lowered to a normal LLVM function whose first hidden parameter is a pointer to the object.
+
+For example, conceptually:
+
+`Point.getX()`
+
+becomes an LLVM function similar to:
+
+`Point_getX(self_pointer)`
+
+I used:
+
+- one LLVM function for each structure/member-function pair;
+- a hidden object pointer as the first parameter;
+- field access through this object pointer;
+- the same normal parameters after the hidden object pointer.
+
+For bare field names inside a member function, the code generator can use the current object pointer after semantic lookup has established that the identifier refers to a field.
+
+For bare member calls inside another member function, the current object pointer is passed automatically.
+
+What I understood:
+- member functions do not need a completely different LLVM function model;
+- they can be represented as ordinary functions with an explicit hidden object pointer;
+- semantic analysis is responsible for checking mutability before code generation.
+
+
+==================================================
+11. INPUT AND OUTPUT
+==================================================
+
+Prompt:
+
+"окей давай до o/i  іпоясни як це працює"
+
+ChatGPT explained how MeowLang I/O can use the C runtime.
+
+The implementation uses declarations for:
+
+- `scanf`;
+- `printf`.
+
+`📚()`:
+
+1. allocates an `i32` slot;
+2. calls `scanf("%d", pointer)`;
+3. loads and returns the value.
+
+`🐾(...)` uses:
+
+- `%d` for `i32`;
+- `%lld` for `i64`;
+- textual `true` or `false` for bool;
+- `%s` for string literals.
+
+The project defines print as adding one newline after the complete printed value.
+
+For structures, printing is generic:
+
+- print the structure name;
+- iterate through its semantic field metadata;
+- use GEP to reach each field;
+- load and print the value;
+- recursively print nested structure fields.
+
+Example format:
+
+`Point{x: 10, y: 20}`
+
+What I understood:
+- LLVM itself does not provide high-level terminal I/O;
+- the generated module declares external C functions and `clang` links them with the system C library;
+- generic object printing is possible because the compiler already has complete structure field metadata.
+
+
+==================================================
+12. TESTING
+==================================================
+
+Prompts included:
+
+"окей давай далі"
+
+"окей давай зробимо"
+
+I used ChatGPT to plan additional valid, invalid and end-to-end tests.
+
+Important invalid cases included:
+
+- integer literal overflow;
+- illegal `i64 -> i32` narrowing;
+- bool used in arithmetic;
+- invalid bool/integer comparison;
+- undeclared variables;
+- duplicate declarations;
+- assignment to immutable variables;
+- non-bool `if` conditions;
+- unknown functions;
+- too few function arguments;
+- too many function arguments;
+- wrong function argument types;
+- wrong return types;
+- missing return paths;
+- wrong structure constructor argument count;
+- wrong structure constructor argument types;
+- unknown fields;
+- assignment through immutable field chains;
+- mutating member function called on an immutable object;
+- unknown member functions;
+- wrong member argument counts;
+- duplicate fields.
+
+End-to-end tests cover:
+
+- arithmetic;
+- integer widening;
+- if/else;
+- functions;
+- forward calls;
+- recursion;
+- structures;
+- nested structures;
+- member functions;
+- input and output.
+
+A test with a `.in` file was included for standard input.
+
+I adapted expected error messages and source positions to the actual compiler implementation.
+
+The complete test suite passed:
+
+Passed: 108
+Failed: 0
+
+
+==================================================
+13. README AND DOCUMENTATION
+==================================================
+
+Prompts included:
+
+"перевір що треба додвти"
+
+"давай повний readme"
+
+I provided my existing `README.md` and `grammar.ebnf` to ChatGPT for review.
+
+ChatGPT identified that the README still mainly described Stage 1.
+
+I used an AI-generated Stage 2 README draft as a base.
+
+It was updated to document:
+
+- Stage 2 features;
+- arithmetic and widening;
+- overflow;
+- functions;
+- recursion and forward calls;
+- structures;
+- fields;
+- member functions;
+- name lookup;
+- mutability;
+- input/output;
+- structure printing;
+- semantic analysis;
+- LLVM code generation;
+- build and run commands;
+- errors;
+- testing;
+- `ai_usage_2.txt`.
+
+The grammar itself was written by me. ChatGPT was used to review its coverage and consistency with the implementation.
+
+
+==================================================
+14. WHAT I CHANGED FROM AI SUGGESTIONS
+==================================================
+
+AI responses often used generic example class names or helper names.
+
+I changed suggestions to match:
+
+- my existing AST classes;
+- my parser organization;
+- my symbol table implementation;
+- MeowLang syntax;
+- existing error-reporting functions;
+- existing Stage 1 behavior.
+
+I did not assume that generated code was correct without testing.
+
+Some suggested code fragments required adaptation because the actual compiler evolved during implementation.
+
+I used the test suite to verify the integrated implementation after changes.
+
+The final compiler behavior is defined by my source code, grammar, README and tests, not by the AI conversation.
+
+
+==================================================
+15. MY UNDERSTANDING
+==================================================
+
+The compiler now has a clear sequence of phases.
+
+The lexer converts UTF-8 source text into tokens and tracks source positions.
+
+The recursive-descent parser converts the token stream into an AST.
+
+The semantic analyzer walks the AST before any LLVM IR is generated. It resolves declarations, manages scopes, determines expression types, checks mutability, validates function calls, validates structures and fields, and rejects invalid programs.
+
+The semantic analyzer also determines when the only supported implicit conversion, `i32 -> i64`, is valid.
+
+The LLVM generator assumes that semantic analysis has already accepted the program. It therefore focuses on generating IR instead of discovering source-language type errors.
+
+Functions are declared before their bodies so recursion and forward calls work.
+
+Structures become LLVM structure types. Fields are accessed by their numeric indices using GEP.
+
+Member functions are implemented as LLVM functions with a hidden pointer to the receiver object.
+
+Input and output use C library functions declared in LLVM and linked by Clang.
+
+Compile-time literal overflow and runtime arithmetic overflow are different problems: literal range errors are rejected by semantic analysis, while runtime arithmetic is protected by generated overflow checks.
+
+Testing the complete source-to-executable pipeline is important because valid AST and semantic behavior do not guarantee that the generated LLVM module actually builds or produces the expected output.
+
+
+==================================================
+16. EXACT CHAT PROMPTS USED DURING THE MAIN IMPLEMENTATION
+==================================================
+
+The following are exact prompts/messages from the Stage 2 implementation conversation:
+
+"що тут треба робити та скільки часу витратити"
+
+"functions
+murr add(🐱 a, 🐱 b) kss 🐱 {
+    mi a + b
+}
+
+struct
+mewi Point { var ....}
+
+member 
+
+mewi Point {..... murr getX() kss ...."
+
+"read() -> 📚()
+print() -> 🐾()
+`Point{10, 20}` for object creation"
+
+"ок давай"
+
+"ок ebnf я написала"
+
+"ок lets go"
+
+"ok lets go to parser"
+
+"ок супер це я зробила"
+
+"готово"
+
+"ok давай далі
+а яка логіка у цих блоків?"
+
+"ок давай робити далі"
+
+"ок поїхали далі в обєкти"
+
+"готово але поясни як вони будуються"
+
+"ок давай"
+
+"давай далі"
+
+"окей давай до LLVM"
+
+"чекай а що ми будемо робити з оверфлоу? та з визначенням типу числа"
+
+"давай виправимо це все перед llvm"
+
+"окей давай далі"
+
+"давай далі до llvm functions"
+
+"ок давай до llvm structs"
+
+"ок давай далі"
+
+"окей давай до o/i  іпоясни як це працює"
+
+"окей давай далі"
+
+"окей давай зробимо"
+
+"108 passed"
+
+"перевір що треба додвти"
+
+"давай повний readme"
+
+"давай ai usage 2"
+
+
+==================================================
+END OF AI USAGE DISCLOSURE
+==================================================

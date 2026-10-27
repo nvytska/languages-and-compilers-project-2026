@@ -1,0 +1,1 @@
+compilation error: line 1:18: cannot initialize 'small' of type 'i32' with value of type 'i64'

@@ -10,7 +10,10 @@ Program
     type: i32
     name: count
     value:
-      IntegerLiteral value: -5
+      UnaryOp
+        operator: -
+        operand:
+          IntegerLiteral value: 5
   VarDecl
     mutable: true
     type: bool
@@ -27,7 +30,8 @@ Program
           IntegerLiteral value: 0
     then:
       Assignment
-        name: count
+        target:
+          Identifier name: count
         value:
           IntegerLiteral value: 10
       If
@@ -40,11 +44,13 @@ Program
               BooleanLiteral value: true
         then:
           Assignment
-            name: active
+            target:
+              Identifier name: active
             value:
               BooleanLiteral value: false
     else:
       Assignment
-        name: count
+        target:
+          Identifier name: count
         value:
           IntegerLiteral value: 1

@@ -1,0 +1,4 @@
+mewi Point {
+    var 🐱 x
+    var 🐱 x
+}

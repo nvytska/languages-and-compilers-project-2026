@@ -1,0 +1,2 @@
+mewi Point { var 🐱 x var 🐱 y }
+let Point p meow Point{1, 2} p.x meow 5

@@ -1,0 +1,5 @@
+murr f() kss 🐱 {
+    if true {
+        mi 1
+    }
+}

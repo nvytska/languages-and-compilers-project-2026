@@ -4,4 +4,7 @@ Program
     type: i32
     name: temperature
     value:
-      IntegerLiteral value: -12
+      UnaryOp
+        operator: -
+        operand:
+          IntegerLiteral value: 12

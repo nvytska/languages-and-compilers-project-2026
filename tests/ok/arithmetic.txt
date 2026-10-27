@@ -1,0 +1,5 @@
+var 🐱 a meow 10
+var 🐱 b meow 20
+var 🐱 c meow a + b * 2
+
+🐾(c)

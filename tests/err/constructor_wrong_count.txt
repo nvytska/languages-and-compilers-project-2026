@@ -1,0 +1,2 @@
+mewi Point { var 🐱 x var 🐱 y }
+var Point p meow Point{1}

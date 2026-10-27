@@ -1,0 +1,5 @@
+murr add(🐱 a, 🐱 b) kss 🐱 {
+    mi a + b
+}
+
+var 🐱 x meow add(1, 2, 3)

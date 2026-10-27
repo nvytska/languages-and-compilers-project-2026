@@ -1,57 +1,328 @@
-program = { statement } ;
+program = { top_level_item } ;
 
-statement =
-      variable_declaration
-    | assignment
-    | if_statement
+top_level_item =
+      function_decl
+    | struct_decl
+    | statement
     ;
 
-variable_declaration =
-    ("var" | "let"), type, identifier, "meow", expression
+
+(* ========================================================= *)
+(* DECLARATIONS                                              *)
+(* ========================================================= *)
+
+function_decl =
+    "murr", identifier,
+    "(", [ parameter_list ], ")",
+    "kss", type,
+    block
     ;
 
-assignment =
-    identifier, "meow", expression
+parameter_list =
+    parameter, { ",", parameter }
     ;
 
-if_statement =
-    "if", expression, "{", statement, { statement }, "}",
-    [ "else", "{", statement, { statement }, "}" ]
+parameter =
+    type, identifier
     ;
 
-expression =
-    primary, [ comparison_operator, primary ]
+
+struct_decl =
+    "mewi", identifier,
+    "{",
+        field_decl, { field_decl },
+        { member_function_decl },
+    "}"
     ;
 
-comparison_operator =
-      "meowmeow"
-    | "woem"
+field_decl =
+    ("var" | "let"), type, identifier
     ;
 
-primary =
-      integer_literal
-    | boolean_literal
-    | identifier
+member_function_decl =
+    "murr", identifier,
+    "(", [ parameter_list ], ")",
+    "kss", type,
+    block
     ;
+
+
+(* ========================================================= *)
+(* TYPES                                                     *)
+(* ========================================================= *)
 
 type =
       "🐱"
     | "🐈"
     | "😺"
+    | identifier
     ;
+
+
+(* ========================================================= *)
+(* STATEMENTS                                                *)
+(* ========================================================= *)
+
+statement =
+      variable_decl
+    | assignment_stmt
+    | if_stmt
+    | return_stmt
+    | print_stmt
+    | call_stmt
+    ;
+
+
+variable_decl =
+    ("var" | "let"),
+    type,
+    identifier,
+    "meow",
+    expression
+    ;
+
+
+assignment_stmt =
+    assignment_target,
+    "meow",
+    expression
+    ;
+
+assignment_target =
+    identifier,
+    { ".", identifier }
+    ;
+
+
+if_stmt =
+    "if",
+    expression,
+    block,
+    [ "else", block ]
+    ;
+
+
+return_stmt =
+    "mi",
+    expression
+    ;
+
+
+print_stmt =
+    "🐾",
+    "(",
+    print_value,
+    ")"
+    ;
+
+print_value =
+      expression
+    | string_literal
+    ;
+
+
+call_stmt =
+      function_call
+    | member_call
+    ;
+
+
+block =
+    "{",
+    statement,
+    { statement },
+    "}"
+    ;
+
+
+(* ========================================================= *)
+(* EXPRESSIONS                                               *)
+(* ========================================================= *)
+
+expression =
+    equality_expr
+    ;
+
+
+equality_expr =
+    additive_expr,
+    [ equality_operator, additive_expr ]
+    ;
+
+equality_operator =
+      "meowmeow"
+    | "woem"
+    ;
+
+
+additive_expr =
+    multiplicative_expr,
+    { additive_operator, multiplicative_expr }
+    ;
+
+additive_operator =
+      "+"
+    | "-"
+    ;
+
+
+multiplicative_expr =
+    unary_expr,
+    { multiplicative_operator, unary_expr }
+    ;
+
+multiplicative_operator =
+      "*"
+    ;
+
+
+unary_expr =
+      "-", unary_expr
+    | postfix_expr
+    ;
+
+postfix_expr =
+    primary_expr, { postfix_suffix }
+    ;
+
+postfix_suffix =
+      call_suffix
+    | construction_suffix
+    | ".", identifier, [ call_suffix ]
+    ;
+
+call_suffix =
+    "(", [ argument_list ], ")"
+    ;
+
+construction_suffix =
+    "{", [ argument_list ], "}"
+    ;
+
+(* A direct call or construction suffix requires an identifier as its prefix;
+   parentheses may preserve that identifier. Other expressions support field
+   access and member calls, but are not directly callable or constructible.
+   In an if condition, braces start the statement block unless the matching
+   closing brace is followed by a postfix/operator token or the body's brace.
+*)
+
+
+primary_expr =
+      integer_literal
+    | boolean_literal
+    | read_expr
+    | identifier
+    | "(", expression, ")"
+    ;
+
+
+(* ========================================================= *)
+(* FUNCTION AND MEMBER CALLS                                 *)
+(* ========================================================= *)
+
+function_call =
+    identifier,
+    "(",
+    [ argument_list ],
+    ")"
+    ;
+
+
+member_call =
+    identifier, { postfix_suffix }, ".", identifier, call_suffix
+    ;
+
+(* A standalone call statement starts with an identifier and ends in a call.
+   Examples: foo(), p.move(), Point{10}.getX(), make().center.getX().
+*)
+
+
+argument_list =
+    expression,
+    { ",", expression }
+    ;
+
+
+(* ========================================================= *)
+(* STRUCTURES AND FIELDS                                     *)
+(* ========================================================= *)
+
+object_creation =
+    struct_name,
+    "{",
+    [ argument_list ],
+    "}"
+    ;
+
+struct_name =
+    identifier
+    ;
+
+
+field_access =
+    postfix_expr, ".", identifier
+    ;
+
+(* object_creation and field_access name the corresponding postfix forms.
+   Semantic assignment targets must be identifier-rooted field chains;
+   fields of temporary objects may be read, but cannot be assigned.
+*)
+
+
+(* ========================================================= *)
+(* BUILT-INS                                                 *)
+(* ========================================================= *)
+
+read_expr =
+    "📚",
+    "(",
+    ")"
+    ;
+
+
+(* ========================================================= *)
+(* LITERALS                                                  *)
+(* ========================================================= *)
 
 boolean_literal =
       "true"
     | "false"
     ;
 
+
 integer_literal =
-    [ "-" ], digit, { digit }
+    digit,
+    { digit }
     ;
 
-identifier =
-    letter, { letter | digit | "_" }
+
+string_literal =
+    '"',
+    { string_character },
+    '"'
     ;
+
+
+(* ========================================================= *)
+(* LEXICAL RULES                                             *)
+(* ========================================================= *)
+
+identifier =
+    identifier_start,
+    { identifier_part }
+    ;
+
+identifier_start =
+      letter
+    | "_"
+    ;
+
+identifier_part =
+      letter
+    | digit
+    | "_"
+    ;
+
 
 letter =
       "a" | "b" | "c" | "d" | "e" | "f" | "g"
@@ -62,10 +333,35 @@ letter =
     | "H" | "I" | "J" | "K" | "L" | "M" | "N"
     | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
     | "V" | "W" | "X" | "Y" | "Z"
-    | "_"
     ;
+
 
 digit =
       "0" | "1" | "2" | "3" | "4"
     | "5" | "6" | "7" | "8" | "9"
     ;
+
+
+string_character =
+    ? any UTF-8 character except '"', carriage return and newline ?
+    ;
+
+
+(* Whitespace separates tokens and is otherwise ignored. *)
+(* Whitespace consists of spaces, tabs, carriage returns and newlines. *)
+
+(* Reserved words, excluded from identifiers:
+   var, let, if, else, true, false,
+   murr, mewi, kss, mi,
+   meow, meowmeow, woem
+*)
+
+(* Built-in symbols:
+   🐱, 🐈, 😺, 📚, 🐾
+*)
+
+(* Punctuation/operators:
+   { } ( ) , . + - * "
+*)
+
+(* Strings have no escape processing. Source comments are not supported. *)
