@@ -1,0 +1,20 @@
+Program
+  VarDecl
+    mutable: true
+    type: i32
+    name: x
+    value:
+      IntegerLiteral value: 5
+  If
+    condition:
+      Comparison
+        operator: meowmeow
+        left:
+          Identifier name: x
+        right:
+          IntegerLiteral value: 5
+    then:
+      Assignment
+        name: x
+        value:
+          IntegerLiteral value: 6

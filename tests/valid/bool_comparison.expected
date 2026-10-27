@@ -1,0 +1,18 @@
+Program
+  VarDecl
+    mutable: true
+    type: bool
+    name: ready
+    value:
+      BooleanLiteral value: true
+  VarDecl
+    mutable: true
+    type: bool
+    name: same
+    value:
+      Comparison
+        operator: meowmeow
+        left:
+          Identifier name: ready
+        right:
+          BooleanLiteral value: true

@@ -1,0 +1,71 @@
+program = { statement } ;
+
+statement =
+      variable_declaration
+    | assignment
+    | if_statement
+    ;
+
+variable_declaration =
+    ("var" | "let"), type, identifier, "meow", expression
+    ;
+
+assignment =
+    identifier, "meow", expression
+    ;
+
+if_statement =
+    "if", expression, "{", statement, { statement }, "}",
+    [ "else", "{", statement, { statement }, "}" ]
+    ;
+
+expression =
+    primary, [ comparison_operator, primary ]
+    ;
+
+comparison_operator =
+      "meowmeow"
+    | "woem"
+    ;
+
+primary =
+      integer_literal
+    | boolean_literal
+    | identifier
+    ;
+
+type =
+      "🐱"
+    | "🐈"
+    | "😺"
+    ;
+
+boolean_literal =
+      "true"
+    | "false"
+    ;
+
+integer_literal =
+    [ "-" ], digit, { digit }
+    ;
+
+identifier =
+    letter, { letter | digit | "_" }
+    ;
+
+letter =
+      "a" | "b" | "c" | "d" | "e" | "f" | "g"
+    | "h" | "i" | "j" | "k" | "l" | "m" | "n"
+    | "o" | "p" | "q" | "r" | "s" | "t" | "u"
+    | "v" | "w" | "x" | "y" | "z"
+    | "A" | "B" | "C" | "D" | "E" | "F" | "G"
+    | "H" | "I" | "J" | "K" | "L" | "M" | "N"
+    | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
+    | "V" | "W" | "X" | "Y" | "Z"
+    | "_"
+    ;
+
+digit =
+      "0" | "1" | "2" | "3" | "4"
+    | "5" | "6" | "7" | "8" | "9"
+    ;

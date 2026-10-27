@@ -1,0 +1,50 @@
+Program
+  VarDecl
+    mutable: false
+    type: i64
+    name: limit
+    value:
+      IntegerLiteral value: 9000000000
+  VarDecl
+    mutable: true
+    type: i32
+    name: count
+    value:
+      IntegerLiteral value: -5
+  VarDecl
+    mutable: true
+    type: bool
+    name: active
+    value:
+      BooleanLiteral value: true
+  If
+    condition:
+      Comparison
+        operator: woem
+        left:
+          Identifier name: count
+        right:
+          IntegerLiteral value: 0
+    then:
+      Assignment
+        name: count
+        value:
+          IntegerLiteral value: 10
+      If
+        condition:
+          Comparison
+            operator: meowmeow
+            left:
+              Identifier name: active
+            right:
+              BooleanLiteral value: true
+        then:
+          Assignment
+            name: active
+            value:
+              BooleanLiteral value: false
+    else:
+      Assignment
+        name: count
+        value:
+          IntegerLiteral value: 1

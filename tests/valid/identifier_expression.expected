@@ -1,0 +1,13 @@
+Program
+  VarDecl
+    mutable: true
+    type: i32
+    name: x
+    value:
+      IntegerLiteral value: 5
+  VarDecl
+    mutable: true
+    type: i32
+    name: y
+    value:
+      Identifier name: x

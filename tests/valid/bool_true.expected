@@ -1,0 +1,7 @@
+Program
+  VarDecl
+    mutable: true
+    type: bool
+    name: sleepy
+    value:
+      BooleanLiteral value: true
