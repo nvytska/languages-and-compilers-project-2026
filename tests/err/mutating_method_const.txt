@@ -1,0 +1,2 @@
+mewi Point { var 🐱 x murr setX(🐱 n) kss 🐱 { x meow n mi x } }
+let Point p meow Point{1} p.setX(2)

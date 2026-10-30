@@ -24,6 +24,7 @@ Program
     value:
       BooleanLiteral value: false
   Assignment
-    name: x
+    target:
+      Identifier name: x
     value:
       Identifier name: y

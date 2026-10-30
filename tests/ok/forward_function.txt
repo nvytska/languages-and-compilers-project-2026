@@ -1,0 +1,9 @@
+murr first() kss 🐱 {
+    mi second()
+}
+
+murr second() kss 🐱 {
+    mi 42
+}
+
+🐾(first())

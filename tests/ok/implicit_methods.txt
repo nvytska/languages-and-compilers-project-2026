@@ -1,0 +1,8 @@
+mewi Point {
+var 🐱 x
+murr twiceX() kss 🐱 { mi getX() + getX() }
+murr getX() kss 🐱 { mi x }
+}
+let Point p meow Point{10}
+🐾(p.twiceX())
+🐾(Point{7})
